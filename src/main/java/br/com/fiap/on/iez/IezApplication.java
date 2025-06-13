@@ -16,4 +16,6 @@ public class IezApplication {
 	// TODO Fazer método de criação de token
 	// TODO Fazer método de troca de senha
 
+	// TODO A aplicação tá construindo as paradas sem rodar o GeradorChaveJwt antes, aí tá dando pau pra subir
+
 }
