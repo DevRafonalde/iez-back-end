@@ -1,32 +1,44 @@
 package br.com.fiap.on.iez.services;
 
-import br.com.fiap.on.iez.utils.GeradorChaveJwt;
-import io.jsonwebtoken.Claims;
+import br.com.fiap.on.iez.models.entities.orm.UsuarioORM;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.Key;
+import java.util.Date;
 
 @Service
 public class JwtService {
 
-    private final String chaveSecreta;
+    private final Key chave;
 
-    public JwtService() throws IOException {
-        GeradorChaveJwt geradorChaveJwt = new GeradorChaveJwt();
-        geradorChaveJwt.aoIniciar();
-        this.chaveSecreta = Files.readString(Paths.get("jwt/jwt_secret_key.txt"));
+    @SneakyThrows
+    public JwtService() {
+        String chaveString = Files.readString(Paths.get("jwt/jwt_secret_key.txt"));
+        this.chave = Keys.hmacShaKeyFor(chaveString.getBytes());
+    }
+
+    public String gerarToken(UsuarioORM usuario) {
+        return Jwts.builder()
+                .setSubject(usuario.getNomeUser())
+                .claim("idUsuario", usuario.getId())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 24 horas
+                .signWith(chave, SignatureAlgorithm.HS256)
+                .compact();
     }
 
     public int validarTokenERetornarId(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(chaveSecreta)
+        return Jwts.parserBuilder()
+                .setSigningKey(chave)
+                .build()
                 .parseClaimsJws(token)
-                .getBody();
-
-        return claims.get("idUsuario", Integer.class);
+                .getBody()
+                .get("idUsuario", Integer.class);
     }
 }
-

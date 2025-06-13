@@ -11,8 +11,8 @@ import br.com.fiap.on.iez.models.entities.orm.UsuarioPerfilORM;
 import br.com.fiap.on.iez.models.repositories.PerfilRepository;
 import br.com.fiap.on.iez.models.repositories.UsuarioPerfilRepository;
 import br.com.fiap.on.iez.models.repositories.UsuarioRepository;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,41 +22,29 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@RequiredArgsConstructor
 public class UsuarioService {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private UsuarioPerfilRepository usuarioPerfilRepository;
-
-    @Autowired
-    private PerfilRepository perfilRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private ModelMapper mapper;
+    private final UsuarioRepository usuarioRepository;
+    private final UsuarioPerfilRepository usuarioPerfilRepository;
+    private final PerfilRepository perfilRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final ModelMapper mapper;
 
     public List<UsuarioDTO> listarTodos() {
         List<UsuarioORM> usuarios = usuarioRepository.findAll();
 
-        // Filtra todos os usuários que possuam nome amigável e os transforma em DTO
         List<UsuarioDTO> usuariosAmigaveis = usuarios.stream()
                 .filter(usuario -> usuario.getNomeAmigavel() != null && usuario.getAtivo())
                 .map(usuario -> mapper.map(usuario, UsuarioDTO.class))
                 .toList();
 
-        // Faz com que a primeira letra de cada nome seja maiúscula
         usuariosAmigaveis.forEach(
                 usuario -> usuario.setNomeAmigavel(
                         usuario.getNomeAmigavel()
                                 .substring(0, 1)
                                 .toUpperCase()
-                                .concat(usuario.getNomeAmigavel()
-                                        .substring(1)
-                                )
+                                .concat(usuario.getNomeAmigavel().substring(1))
                 )
         );
 
@@ -64,7 +52,8 @@ public class UsuarioService {
     }
 
     public UsuarioPerfilDTO listarEspecifico(Integer id) {
-        UsuarioORM usuario = usuarioRepository.findById(id).orElseThrow(() -> new ElementoNaoEncontradoException("Usuário não encontrado no banco de dados"));
+        UsuarioORM usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ElementoNaoEncontradoException("Usuário não encontrado no banco de dados"));
 
         UsuarioPerfilDTO usuarioPerfilDTO = new UsuarioPerfilDTO();
         usuarioPerfilDTO.setUsuario(mapper.map(usuario, UsuarioDTO.class));
@@ -74,11 +63,7 @@ public class UsuarioService {
                 .map(perfil -> mapper.map(perfil, PerfilDTO.class))
                 .toList();
 
-        if (perfis.isEmpty()) {
-            usuarioPerfilDTO.setPerfisUsuario(new ArrayList<>());
-        } else {
-            usuarioPerfilDTO.setPerfisUsuario(perfis);
-        }
+        usuarioPerfilDTO.setPerfisUsuario(perfis.isEmpty() ? new ArrayList<>() : perfis);
 
         return usuarioPerfilDTO;
     }
@@ -90,7 +75,8 @@ public class UsuarioService {
     }
 
     public void deletar(Integer id) {
-        UsuarioORM usuarioDelete = usuarioRepository.findById(id).orElseThrow(() -> new ElementoNaoEncontradoException("Usuário não encontrado no banco de dados"));
+        UsuarioORM usuarioDelete = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ElementoNaoEncontradoException("Usuário não encontrado no banco de dados"));
 
         List<UsuarioPerfilORM> vinculosUsuario = usuarioPerfilRepository.findByUsuario(usuarioDelete);
         if (!vinculosUsuario.isEmpty()) {
@@ -108,10 +94,7 @@ public class UsuarioService {
         }
 
         UsuarioORM usuarioRecebido = mapper.map(usuarioPerfilDTO.getUsuario(), UsuarioORM.class);
-
-        String senhaCriptografada = passwordEncoder.encode(usuarioRecebido.getSenhaUser());
-        usuarioRecebido.setSenhaUser(senhaCriptografada);
-
+        usuarioRecebido.setSenhaUser(passwordEncoder.encode(usuarioRecebido.getSenhaUser()));
         UsuarioORM usuarioCadastrado = usuarioRepository.save(usuarioRecebido);
 
         List<PerfilORM> perfis = usuarioPerfilDTO.getPerfisUsuario()
@@ -127,7 +110,6 @@ public class UsuarioService {
             usuarioPerfil.setDataHora(LocalDateTime.now());
             usuarioPerfil.setPerfil(perfil);
             usuarioPerfilRepository.save(usuarioPerfil);
-
             perfisDto.add(mapper.map(perfil, PerfilDTO.class));
         }
 
@@ -137,11 +119,11 @@ public class UsuarioService {
     public UsuarioPerfilDTO editar(UsuarioPerfilDTO modeloCadastroUsuarioPerfil) {
         UsuarioORM usuarioMexido = mapper.map(modeloCadastroUsuarioPerfil.getUsuario(), UsuarioORM.class);
 
-        UsuarioORM usuarioBanco = usuarioRepository.findById(usuarioMexido.getId()).orElseThrow(() -> new ElementoNaoEncontradoException("Usuário não encontrado no banco de dados"));
+        UsuarioORM usuarioBanco = usuarioRepository.findById(usuarioMexido.getId())
+                .orElseThrow(() -> new ElementoNaoEncontradoException("Usuário não encontrado no banco de dados"));
 
-        if (!usuarioMexido.getNomeUser().equalsIgnoreCase(usuarioBanco.getNomeUser())){
+        if (!usuarioMexido.getNomeUser().equalsIgnoreCase(usuarioBanco.getNomeUser())) {
             UsuarioORM usuarioExistente = usuarioRepository.findByNomeUser(usuarioMexido.getNomeUser());
-
             if (Objects.nonNull(usuarioExistente)) {
                 throw new AtributoJaUtilizadoException("Nome de usuário já está sendo utilizado");
             }
@@ -150,6 +132,7 @@ public class UsuarioService {
         usuarioMexido.setSenhaUser(usuarioBanco.getSenhaUser());
 
         UsuarioORM usuarioSalvo = usuarioRepository.save(usuarioMexido);
+
         List<UsuarioPerfilORM> registrosExistentes = usuarioPerfilRepository.findByUsuario(usuarioMexido);
         usuarioPerfilRepository.deleteAll(registrosExistentes);
 
@@ -166,7 +149,6 @@ public class UsuarioService {
             usuarioPerfil.setDataHora(LocalDateTime.now());
             usuarioPerfil.setPerfil(perfil);
             usuarioPerfilRepository.save(usuarioPerfil);
-
             perfisDto.add(mapper.map(perfil, PerfilDTO.class));
         }
 
@@ -191,5 +173,18 @@ public class UsuarioService {
 
             usuarioPerfilRepository.save(usuarioPerfilAdmin);
         }
+    }
+
+    public UsuarioORM autenticar(String nomeUser, String senha) {
+        UsuarioORM usuarioEncontrado = usuarioRepository.findByNomeUser(nomeUser);
+        if (passwordEncoder.matches(senha, usuarioEncontrado.getSenhaUser())) {
+            return usuarioEncontrado;
+        }
+        throw new ElementoNaoEncontradoException("Usuário ou senha inválidos");
+    }
+
+    public void loginFeito(UsuarioORM usuario) {
+        // Lógica opcional pós-login, como atualização de status ou auditoria
+        // Exemplo: atualizar data de último acesso, etc.
     }
 }

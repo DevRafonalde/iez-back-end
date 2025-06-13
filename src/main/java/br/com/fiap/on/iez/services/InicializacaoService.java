@@ -55,6 +55,7 @@ public class InicializacaoService {
         admin.setNomeAmigavel("Administrador");
         admin.setNomeUser("admin");
         admin.setSenhaUser(passwordEncoder.encode("123456"));
+        admin.setSenhaAtualizada(true);
 
         return usuarioRepository.save(admin);
     }
