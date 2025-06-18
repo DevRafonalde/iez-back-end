@@ -12,13 +12,14 @@ public class NumeroController {
     private NumeroService numeroService;
 
     @GetMapping("/{valor}")
-    @Permissao(rota = "buscar-valor")
+    @Permissao(rota = "buscarvalor")
     public NumeroORM buscarValor(@PathVariable String valor) {
         Integer valorEmNumero = Integer.valueOf(valor);
         return numeroService.buscarValor(valorEmNumero);
     }
 
     @PostMapping("/criar-valor")
+    @Permissao(rota = "criarvalor")
     public NumeroORM criarValor(@RequestBody NumeroORM valor) {
         return numeroService.criarValor(valor);
     }

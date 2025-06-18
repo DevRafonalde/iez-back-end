@@ -14,13 +14,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
-                .csrf(AbstractHttpConfigurer::disable) // forma nova de desativar CSRF
-                .httpBasic(AbstractHttpConfigurer::disable) // opcional: ativa HTTP Basic se quiser
-                .formLogin(AbstractHttpConfigurer::disable); // desativa o formulário de login
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/usuarios/login").permitAll() // permite login
+                        .anyRequest().permitAll() // permite o restante
+                )
+                .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable);
 
         return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

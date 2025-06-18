@@ -76,7 +76,7 @@ public class UsuarioController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequest) {
-        UsuarioORM usuario = usuarioService.autenticar(loginRequest.getNomeuUser(), loginRequest.getSenha());
+        UsuarioORM usuario = usuarioService.autenticar(loginRequest.getNomeUser(), loginRequest.getSenha());
 
         String token = jwtService.gerarToken(usuario);
 
