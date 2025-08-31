@@ -1,5 +1,6 @@
 package br.com.fiap.on.iez.services;
 
+import br.com.fiap.on.iez.config.PasswordUtil;
 import br.com.fiap.on.iez.controllers.NumeroController;
 import br.com.fiap.on.iez.controllers.PerfilController;
 import br.com.fiap.on.iez.controllers.PermissaoController;
@@ -7,7 +8,6 @@ import br.com.fiap.on.iez.controllers.UsuarioController;
 import br.com.fiap.on.iez.models.entities.orm.*;
 import br.com.fiap.on.iez.models.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Method;
@@ -34,8 +34,8 @@ public class InicializacaoService {
     @Autowired
     private UsuarioPerfilRepository usuarioPerfilRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
 
     public void startSeeder() {
         if (Objects.nonNull(usuarioRepository.findByNomeUser("admin"))) {
@@ -54,7 +54,7 @@ public class InicializacaoService {
         admin.setNomeCompleto("Administrador");
         admin.setNomeAmigavel("Administrador");
         admin.setNomeUser("admin");
-        admin.setSenhaUser(passwordEncoder.encode("123456"));
+        admin.setSenhaUser(PasswordUtil.hashPassword("123456"));
         admin.setSenhaAtualizada(true);
 
         return usuarioRepository.save(admin);
@@ -91,11 +91,17 @@ public class InicializacaoService {
                 .map(String::toLowerCase)
                 .toList();
 
+        List<String> permissoesAi = Arrays.stream(AiChatService.class.getDeclaredMethods())
+                .map(Method::getName)
+                .map(String::toLowerCase)
+                .toList();
+
         List<String> todasPermissoes = new ArrayList<>();
         todasPermissoes.addAll(permissoesPerfil);
         todasPermissoes.addAll(permissoesUsuarios);
         todasPermissoes.addAll(permissoesPermissoes);
         todasPermissoes.addAll(permissoesNumeros);
+        todasPermissoes.addAll(permissoesAi);
 
         int contadorId = 1;
         for (String nomePermissao : todasPermissoes) {

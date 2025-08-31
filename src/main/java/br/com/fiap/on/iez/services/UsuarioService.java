@@ -1,5 +1,6 @@
 package br.com.fiap.on.iez.services;
 
+import br.com.fiap.on.iez.config.PasswordUtil;
 import br.com.fiap.on.iez.exceptions.AtributoJaUtilizadoException;
 import br.com.fiap.on.iez.exceptions.ElementoNaoEncontradoException;
 import br.com.fiap.on.iez.models.entities.dto.PerfilDTO;
@@ -13,7 +14,6 @@ import br.com.fiap.on.iez.models.repositories.UsuarioPerfilRepository;
 import br.com.fiap.on.iez.models.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,7 +28,6 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final UsuarioPerfilRepository usuarioPerfilRepository;
     private final PerfilRepository perfilRepository;
-    private final PasswordEncoder passwordEncoder;
     private final ModelMapper mapper;
 
     public List<UsuarioDTO> listarTodos() {
@@ -94,7 +93,7 @@ public class UsuarioService {
         }
 
         UsuarioORM usuarioRecebido = mapper.map(usuarioPerfilDTO.getUsuario(), UsuarioORM.class);
-        usuarioRecebido.setSenhaUser(passwordEncoder.encode(usuarioRecebido.getSenhaUser()));
+        usuarioRecebido.setSenhaUser(PasswordUtil.hashPassword(usuarioRecebido.getSenhaUser()));
         UsuarioORM usuarioCadastrado = usuarioRepository.save(usuarioRecebido);
 
         List<PerfilORM> perfis = usuarioPerfilDTO.getPerfisUsuario()
@@ -161,7 +160,7 @@ public class UsuarioService {
             admin.setNomeCompleto("Administrador");
             admin.setNomeAmigavel("Administrador");
             admin.setNomeUser("admin");
-            admin.setSenhaUser(passwordEncoder.encode("123456"));
+            admin.setSenhaUser(PasswordUtil.hashPassword("123456"));
 
             UsuarioORM usuarioAdmin = usuarioRepository.save(admin);
 
@@ -177,7 +176,7 @@ public class UsuarioService {
 
     public UsuarioORM autenticar(String nomeUser, String senha) {
         UsuarioORM usuarioEncontrado = usuarioRepository.findByNomeUser(nomeUser);
-        if (passwordEncoder.matches(senha, usuarioEncontrado.getSenhaUser())) {
+        if (PasswordUtil.verificarSenha(senha, usuarioEncontrado.getSenhaUser())) {
             return usuarioEncontrado;
         }
         throw new ElementoNaoEncontradoException("Usuário ou senha inválidos");

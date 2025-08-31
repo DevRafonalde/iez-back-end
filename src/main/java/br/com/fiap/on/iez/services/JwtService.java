@@ -24,6 +24,7 @@ public class JwtService {
     }
 
     public String gerarToken(UsuarioORM usuario) {
+        System.out.println("Token Gerado");
         return Jwts.builder()
                 .setSubject(usuario.getNomeUser())
                 .claim("idUsuario", usuario.getId())
@@ -34,6 +35,7 @@ public class JwtService {
     }
 
     public int validarTokenERetornarId(String token) {
+        System.out.println("Entrou no método validar token");
         return Jwts.parserBuilder()
                 .setSigningKey(chave)
                 .build()
