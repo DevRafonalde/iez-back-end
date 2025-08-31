@@ -86,6 +86,7 @@ public class UsuarioService {
     }
 
     public UsuarioPerfilDTO novoUsuario(UsuarioPerfilDTO usuarioPerfilDTO) {
+        System.out.println(usuarioPerfilDTO);
         UsuarioORM usuarioExistente = usuarioRepository.findByNomeUser(usuarioPerfilDTO.getUsuario().getNomeUser());
 
         if (Objects.nonNull(usuarioExistente)) {

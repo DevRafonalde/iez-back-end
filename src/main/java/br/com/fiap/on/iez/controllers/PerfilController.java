@@ -21,7 +21,7 @@ public class PerfilController {
     private PerfilService perfilService;
 
     @PostMapping("/cadastrar")
-    public ResponseEntity<PerfilPermissaoDTO> cadastrar(PerfilPermissaoDTO perfilPermissaoDTO) {
+    public ResponseEntity<PerfilPermissaoDTO> cadastrar(@RequestBody PerfilPermissaoDTO perfilPermissaoDTO) {
         PerfilPermissaoDTO perfilCadastrado = perfilService.novoPerfil(perfilPermissaoDTO);
 
         return new ResponseEntity<>(perfilCadastrado, HttpStatus.OK);
@@ -70,7 +70,7 @@ public class PerfilController {
     }
 
     @PutMapping("/editar")
-    public ResponseEntity<PerfilPermissaoDTO> editar(@Valid PerfilPermissaoDTO perfilPermissaoRecebido) {
+    public ResponseEntity<PerfilPermissaoDTO> editar(@RequestBody @Valid PerfilPermissaoDTO perfilPermissaoRecebido) {
         PerfilPermissaoDTO perfilPermissaoAtualizado = perfilService.editar(perfilPermissaoRecebido);
 
         return new ResponseEntity<>(perfilPermissaoAtualizado, HttpStatus.OK);
