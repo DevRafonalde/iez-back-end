@@ -91,17 +91,17 @@ public class InicializacaoService {
                 .map(String::toLowerCase)
                 .toList();
 
-        List<String> permissoesAi = Arrays.stream(AiChatService.class.getDeclaredMethods())
-                .map(Method::getName)
-                .map(String::toLowerCase)
-                .toList();
+//        List<String> permissoesAi = Arrays.stream(AiChatService.class.getDeclaredMethods())
+//                .map(Method::getName)
+//                .map(String::toLowerCase)
+//                .toList();
 
         List<String> todasPermissoes = new ArrayList<>();
         todasPermissoes.addAll(permissoesPerfil);
         todasPermissoes.addAll(permissoesUsuarios);
         todasPermissoes.addAll(permissoesPermissoes);
         todasPermissoes.addAll(permissoesNumeros);
-        todasPermissoes.addAll(permissoesAi);
+//        todasPermissoes.addAll(permissoesAi);
 
         int contadorId = 1;
         for (String nomePermissao : todasPermissoes) {
