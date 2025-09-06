@@ -52,8 +52,8 @@ public class ClienteService {
         return mapper.map(clienteCriado, ClienteDTO.class);
     }
 
-    public ClienteDTO editar(ClienteDTO cliente) {
-        clienteRepository.findById(cliente.getId()).orElseThrow(() -> new ElementoNaoEncontradoException("Cliente não encontrado no banco de dados"));
+    public ClienteDTO editar(Integer id, ClienteDTO cliente) {
+        clienteRepository.findById(id).orElseThrow(() -> new ElementoNaoEncontradoException("Cliente não encontrado no banco de dados"));
 
         ClienteORM clienteRecebido = mapper.map(cliente, ClienteORM.class);
         ClienteORM clienteAtualizado = clienteRepository.save(clienteRecebido);

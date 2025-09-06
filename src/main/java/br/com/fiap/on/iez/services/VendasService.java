@@ -24,7 +24,7 @@ public class VendasService {
     @Autowired
     private Validator validator;
 
-    public List<VendasDTO> listarTodos(Pageable pageable) {
+    public List<VendasDTO> listarTodas(Pageable pageable) {
         Page<VendasORM> vendasBanco = vendasRepository.findAll(pageable);
 
         // Aqui é uma expressão lambda que passa por todos os itens, os tranforma em DTO e retorna uma lista de DTOs
@@ -45,15 +45,15 @@ public class VendasService {
         vendasRepository.delete(vendaDelete);
     }
 
-    public VendasDTO novoVendas(VendasDTO venda) {
+    public VendasDTO novaVenda(VendasDTO venda) {
         VendasORM vendaRecebida = mapper.map(venda, VendasORM.class);
         VendasORM vendaCriada = vendasRepository.save(vendaRecebida);
 
         return mapper.map(vendaCriada, VendasDTO.class);
     }
 
-    public VendasDTO editar(VendasDTO venda) {
-        vendasRepository.findById(venda.getId()).orElseThrow(() -> new ElementoNaoEncontradoException("Venda não encontrada no banco de dados"));
+    public VendasDTO editar(Integer id, VendasDTO venda) {
+        vendasRepository.findById(id).orElseThrow(() -> new ElementoNaoEncontradoException("Venda não encontrada no banco de dados"));
 
         VendasORM vendaRecebida = mapper.map(venda, VendasORM.class);
         VendasORM vendaAtualizada = vendasRepository.save(vendaRecebida);

@@ -52,8 +52,8 @@ public class ProdutoService {
         return mapper.map(produtoCriado, ProdutoDTO.class);
     }
 
-    public ProdutoDTO editar(ProdutoDTO produto) {
-        produtosRepository.findById(produto.getId()).orElseThrow(() -> new ElementoNaoEncontradoException("Produto não encontrado no banco de dados"));
+    public ProdutoDTO editar(Integer id, ProdutoDTO produto) {
+        produtosRepository.findById(id).orElseThrow(() -> new ElementoNaoEncontradoException("Produto não encontrado no banco de dados"));
 
         ProdutoORM produtoRecebido = mapper.map(produto, ProdutoORM.class);
         ProdutoORM produtoAtualizado = produtosRepository.save(produtoRecebido);
