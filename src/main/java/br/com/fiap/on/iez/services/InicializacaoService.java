@@ -1,7 +1,6 @@
 package br.com.fiap.on.iez.services;
 
 import br.com.fiap.on.iez.config.PasswordUtil;
-import br.com.fiap.on.iez.controllers.NumeroController;
 import br.com.fiap.on.iez.controllers.PerfilController;
 import br.com.fiap.on.iez.controllers.PermissaoController;
 import br.com.fiap.on.iez.controllers.UsuarioController;
@@ -86,10 +85,10 @@ public class InicializacaoService {
                 .map(String::toLowerCase)
                 .toList();
 
-        List<String> permissoesNumeros = Arrays.stream(NumeroController.class.getDeclaredMethods())
-                .map(Method::getName)
-                .map(String::toLowerCase)
-                .toList();
+//        List<String> permissoesNumeros = Arrays.stream(NumeroController.class.getDeclaredMethods())
+//                .map(Method::getName)
+//                .map(String::toLowerCase)
+//                .toList();
 
 //        List<String> permissoesAi = Arrays.stream(AiChatService.class.getDeclaredMethods())
 //                .map(Method::getName)
@@ -100,7 +99,7 @@ public class InicializacaoService {
         todasPermissoes.addAll(permissoesPerfil);
         todasPermissoes.addAll(permissoesUsuarios);
         todasPermissoes.addAll(permissoesPermissoes);
-        todasPermissoes.addAll(permissoesNumeros);
+//        todasPermissoes.addAll(permissoesNumeros);
 //        todasPermissoes.addAll(permissoesAi);
 
         int contadorId = 1;
