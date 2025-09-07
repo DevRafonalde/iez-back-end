@@ -2,7 +2,10 @@ package br.com.fiap.on.iez.services;
 
 import br.com.fiap.on.iez.exceptions.ElementoNaoEncontradoException;
 import br.com.fiap.on.iez.models.entities.dto.VendasDTO;
+import br.com.fiap.on.iez.models.entities.orm.ProdutoORM;
 import br.com.fiap.on.iez.models.entities.orm.VendasORM;
+import br.com.fiap.on.iez.models.repositories.ClienteRepository;
+import br.com.fiap.on.iez.models.repositories.ProdutoRepository;
 import br.com.fiap.on.iez.models.repositories.VendasRepository;
 import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
@@ -19,18 +22,40 @@ public class VendasService {
     private VendasRepository vendasRepository;
 
     @Autowired
+    private ClienteRepository clienteRepository;
+
+    @Autowired
+    private ProdutoRepository produtoRepository;
+
+    @Autowired
     private ModelMapper mapper;
 
     @Autowired
     private Validator validator;
 
-    public List<VendasDTO> listarTodas(Pageable pageable) {
+    public List<VendasDTO> listarTodasPaginado(Pageable pageable) {
         Page<VendasORM> vendasBanco = vendasRepository.findAll(pageable);
 
         // Aqui é uma expressão lambda que passa por todos os itens, os tranforma em DTO e retorna uma lista de DTOs
         return vendasBanco.stream()
                 .map(venda -> mapper.map(venda, VendasDTO.class))
                 .toList();
+    }
+
+    public List<VendasDTO> listarTodas() {
+        List<VendasORM> vendasBanco = vendasRepository.findAll();
+
+        // Aqui é uma expressão lambda que passa por todos os itens, os tranforma em DTO e retorna uma lista de DTOs
+        List<VendasDTO> vendasDto =  vendasBanco.stream()
+                .map(venda -> mapper.map(venda, VendasDTO.class))
+                .toList();
+
+        return vendasBanco.stream()
+                .map(venda -> mapper.map(venda, VendasDTO.class))
+                .toList();
+//        for (VendasDTO venda : vendasDto) {
+//            ProdutoORM produtoBanco = produtoRepository.findById(venda.get)
+//        }
     }
 
     public VendasDTO listarPorId(Integer id) {

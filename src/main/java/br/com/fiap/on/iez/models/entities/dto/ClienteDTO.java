@@ -17,4 +17,3 @@ public class ClienteDTO {
     @NotBlank(message = "O nome do cliente é obrigatório")
     private String nome;
 }
-

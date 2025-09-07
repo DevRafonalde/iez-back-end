@@ -19,11 +19,11 @@ public class VendasDTO {
 
     private LocalDate dataVenda;
 
-    private ProdutoORM produto;
+    private ProdutoDTO produto;
 
     private Integer quantidade;
 
-    private ClienteORM cliente;
+    private ClienteDTO cliente;
 
     private Double totalVenda;
 }

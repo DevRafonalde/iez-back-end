@@ -1,6 +1,7 @@
 package br.com.fiap.on.iez.middlewares;
 
 import br.com.fiap.on.iez.annotations.Permissao;
+import br.com.fiap.on.iez.exceptions.AcessoNaoAutorizadoException;
 import br.com.fiap.on.iez.models.entities.dto.UsuarioPerfilDTO;
 import br.com.fiap.on.iez.services.JwtService;
 import br.com.fiap.on.iez.services.PerfilService;
@@ -49,8 +50,7 @@ public class PermissaoMiddleware implements HandlerInterceptor {
         String token = request.getHeader("Authorization");
         if (token == null || !token.startsWith("Bearer ")) {
             System.out.println("Sem Token");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return false;
+            throw new AcessoNaoAutorizadoException("Não foi enviado o Token de Autorização");
         }
 
         token = token.substring(7);
@@ -59,17 +59,13 @@ public class PermissaoMiddleware implements HandlerInterceptor {
         try {
             idUsuario = jwtService.validarTokenERetornarId(token);
         } catch (Exception e) {
-            System.out.println("Token inválido, Exceção: " + e.getMessage());
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return false;
+            throw new AcessoNaoAutorizadoException("Token inválido, Exceção: " + e.getMessage());
         }
 
         // Carrega o usuário e perfis
         UsuarioPerfilDTO usuario = usuarioService.listarEspecifico(idUsuario);
         if (usuario == null) {
-            System.out.println("Não achou o usuário");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return false;
+            throw new AcessoNaoAutorizadoException("Usuário do token não encontrado");
         }
 
         // Verifica se o usuário possui a permissão exigida
@@ -81,9 +77,7 @@ public class PermissaoMiddleware implements HandlerInterceptor {
                 );
 
         if (!autorizado) {
-            System.out.println("Não achou a permissão");
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return false;
+            throw new AcessoNaoAutorizadoException("Usuário não possui a permissão necessária para esta função");
         }
 
         System.out.println("Passou pelo Middleware");
