@@ -7,6 +7,8 @@ import br.com.fiap.on.iez.models.repositories.*;
 import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -42,8 +44,8 @@ public class PerfilService {
     /**
      * @return Todos os perfis cadastrados, sem a listagem de suas permissões
      */
-    public List<PerfilDTO> listarTodos() {
-        List<PerfilORM> perfisBanco = perfilRepository.findAll();
+    public List<PerfilDTO> listarTodos(Pageable pageable) {
+        Page<PerfilORM> perfisBanco = perfilRepository.findAll(pageable);
 
         // Aqui é uma expressão lambda que passa por todos os itens, os tranforma em DTO e retorna uma lista de DTOs
         return perfisBanco.stream()

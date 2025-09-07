@@ -14,6 +14,8 @@ import br.com.fiap.on.iez.models.repositories.UsuarioPerfilRepository;
 import br.com.fiap.on.iez.models.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,8 +32,8 @@ public class UsuarioService {
     private final PerfilRepository perfilRepository;
     private final ModelMapper mapper;
 
-    public List<UsuarioDTO> listarTodos() {
-        List<UsuarioORM> usuarios = usuarioRepository.findAll();
+    public List<UsuarioDTO> listarTodos(Pageable pageable) {
+        Page<UsuarioORM> usuarios = usuarioRepository.findAll(pageable);
 
         List<UsuarioDTO> usuariosAmigaveis = usuarios.stream()
                 .filter(usuario -> usuario.getNomeAmigavel() != null && usuario.getAtivo())

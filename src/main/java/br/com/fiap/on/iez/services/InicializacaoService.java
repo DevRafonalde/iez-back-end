@@ -1,9 +1,7 @@
 package br.com.fiap.on.iez.services;
 
 import br.com.fiap.on.iez.config.PasswordUtil;
-import br.com.fiap.on.iez.controllers.PerfilController;
-import br.com.fiap.on.iez.controllers.PermissaoController;
-import br.com.fiap.on.iez.controllers.UsuarioController;
+import br.com.fiap.on.iez.controllers.*;
 import br.com.fiap.on.iez.models.entities.orm.*;
 import br.com.fiap.on.iez.models.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +30,6 @@ public class InicializacaoService {
 
     @Autowired
     private UsuarioPerfilRepository usuarioPerfilRepository;
-
-//    @Autowired
-//    private PasswordEncoder passwordEncoder;
 
     public void startSeeder() {
         if (Objects.nonNull(usuarioRepository.findByNomeUser("admin"))) {
@@ -85,22 +80,28 @@ public class InicializacaoService {
                 .map(String::toLowerCase)
                 .toList();
 
-//        List<String> permissoesNumeros = Arrays.stream(NumeroController.class.getDeclaredMethods())
-//                .map(Method::getName)
-//                .map(String::toLowerCase)
-//                .toList();
+        List<String> permissoesClientes = Arrays.stream(ClienteController.class.getDeclaredMethods())
+                .map(Method::getName)
+                .map(String::toLowerCase)
+                .toList();
 
-//        List<String> permissoesAi = Arrays.stream(AiChatService.class.getDeclaredMethods())
-//                .map(Method::getName)
-//                .map(String::toLowerCase)
-//                .toList();
+        List<String> permissoesProdutos = Arrays.stream(ProdutoController.class.getDeclaredMethods())
+                .map(Method::getName)
+                .map(String::toLowerCase)
+                .toList();
+
+        List<String> permissoesVendas = Arrays.stream(VendasController.class.getDeclaredMethods())
+                .map(Method::getName)
+                .map(String::toLowerCase)
+                .toList();
 
         List<String> todasPermissoes = new ArrayList<>();
         todasPermissoes.addAll(permissoesPerfil);
         todasPermissoes.addAll(permissoesUsuarios);
         todasPermissoes.addAll(permissoesPermissoes);
-//        todasPermissoes.addAll(permissoesNumeros);
-//        todasPermissoes.addAll(permissoesAi);
+        todasPermissoes.addAll(permissoesClientes);
+        todasPermissoes.addAll(permissoesProdutos);
+        todasPermissoes.addAll(permissoesVendas);
 
         int contadorId = 1;
         for (String nomePermissao : todasPermissoes) {

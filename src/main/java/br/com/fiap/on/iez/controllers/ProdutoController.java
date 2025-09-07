@@ -1,5 +1,6 @@
 package br.com.fiap.on.iez.controllers;
 
+import br.com.fiap.on.iez.annotations.Permissao;
 import br.com.fiap.on.iez.models.entities.dto.ProdutoDTO;
 import br.com.fiap.on.iez.services.ProdutoService;
 import jakarta.validation.Valid;
@@ -19,35 +20,40 @@ public class ProdutoController {
     private ProdutoService produtoService;
 
     @PostMapping("/")
-    public ResponseEntity<ProdutoDTO> cadastrar(@RequestBody @Valid ProdutoDTO produtoRecebido) {
+    @Permissao(rota = "cadastrarproduto")
+    public ResponseEntity<ProdutoDTO> cadastrarProduto(@RequestBody @Valid ProdutoDTO produtoRecebido) {
         ProdutoDTO produtoCriada = produtoService.novoProduto(produtoRecebido);
 
         return new ResponseEntity<>(produtoCriada, HttpStatus.OK);
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<ProdutoDTO>> listar(Pageable pageable) {
+    @Permissao(rota = "listartodosprodutos")
+    public ResponseEntity<List<ProdutoDTO>> listarTodosProdutos(Pageable pageable) {
         List<ProdutoDTO> produtos = produtoService.listarTodos(pageable);
 
         return new ResponseEntity<>(produtos, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProdutoDTO> listarEspecifico(@PathVariable Integer id) {
+    @Permissao(rota = "listarprodutoespecifico")
+    public ResponseEntity<ProdutoDTO> listarProdutoEspecifico(@PathVariable Integer id) {
         ProdutoDTO produtoEncontrado = produtoService.listarPorId(id);
 
         return new ResponseEntity<>(produtoEncontrado, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deletar(@PathVariable Integer id) {
+    @Permissao(rota = "deletarproduto")
+    public ResponseEntity<Boolean> deletarProduto(@PathVariable Integer id) {
         produtoService.deletar(id);
 
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProdutoDTO> editar(@PathVariable Integer id, @RequestBody @Valid ProdutoDTO produtoDTO) {
+    @Permissao(rota = "editarproduto")
+    public ResponseEntity<ProdutoDTO> editarProduto(@PathVariable Integer id, @RequestBody @Valid ProdutoDTO produtoDTO) {
         ProdutoDTO produtoEditado = produtoService.editar(id, produtoDTO);
 
         return new ResponseEntity<>(produtoEditado, HttpStatus.OK);

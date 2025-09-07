@@ -8,6 +8,8 @@ import br.com.fiap.on.iez.models.repositories.PerfilPermissaoRepository;
 import br.com.fiap.on.iez.models.repositories.PermissaoRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,8 +26,8 @@ public class PermissaoService {
     @Autowired
     private ModelMapper mapper;
 
-    public List<PermissaoDTO> listarTodas() {
-        List<PermissaoORM> permissoes = permissaoRepository.findAll();
+    public List<PermissaoDTO> listarTodas(Pageable pageable) {
+        Page<PermissaoORM> permissoes = permissaoRepository.findAll(pageable);
         return permissoes.stream()
                 .map(permissao -> mapper.map(permissao, PermissaoDTO.class))
                 .toList();

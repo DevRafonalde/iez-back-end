@@ -1,5 +1,6 @@
 package br.com.fiap.on.iez.controllers;
 
+import br.com.fiap.on.iez.annotations.Permissao;
 import br.com.fiap.on.iez.models.entities.dto.ClienteDTO;
 import br.com.fiap.on.iez.services.ClienteService;
 import jakarta.validation.Valid;
@@ -19,35 +20,40 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @PostMapping("/")
-    public ResponseEntity<ClienteDTO> cadastrar(@RequestBody @Valid ClienteDTO clienteRecebido) {
+    @Permissao(rota = "cadastrarcliente")
+    public ResponseEntity<ClienteDTO> cadastrarCliente(@RequestBody @Valid ClienteDTO clienteRecebido) {
         ClienteDTO clienteCriada = clienteService.novoCliente(clienteRecebido);
 
         return new ResponseEntity<>(clienteCriada, HttpStatus.OK);
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<ClienteDTO>> listar(Pageable pageable) {
+    @Permissao(rota = "listartodosclientes")
+    public ResponseEntity<List<ClienteDTO>> listarTodosClientes(Pageable pageable) {
         List<ClienteDTO> clientes = clienteService.listarTodos(pageable);
 
         return new ResponseEntity<>(clientes, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ClienteDTO> listarEspecifico(@PathVariable Integer id) {
+    @Permissao(rota = "listarclienteespecifico")
+    public ResponseEntity<ClienteDTO> listarClienteEspecifico(@PathVariable Integer id) {
         ClienteDTO clienteEncontrado = clienteService.listarPorId(id);
 
         return new ResponseEntity<>(clienteEncontrado, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deletar(@PathVariable Integer id) {
+    @Permissao(rota = "deletarcliente")
+    public ResponseEntity<Boolean> deletarCliente(@PathVariable Integer id) {
         clienteService.deletar(id);
 
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteDTO> editar(@PathVariable Integer id, @RequestBody @Valid ClienteDTO clienteDTO) {
+    @Permissao(rota = "editarcliente")
+    public ResponseEntity<ClienteDTO> editarCliente(@PathVariable Integer id, @RequestBody @Valid ClienteDTO clienteDTO) {
         ClienteDTO clienteEditado = clienteService.editar(id, clienteDTO);
 
         return new ResponseEntity<>(clienteEditado, HttpStatus.OK);

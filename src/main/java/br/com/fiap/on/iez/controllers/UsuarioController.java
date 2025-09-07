@@ -10,6 +10,7 @@ import br.com.fiap.on.iez.services.JwtService;
 import br.com.fiap.on.iez.services.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -36,8 +37,8 @@ public class UsuarioController {
 
     @GetMapping("/listar")
     @Permissao(rota = "listartodosusuarios")
-    public ResponseEntity<List<UsuarioDTO>> listarTodosUsuarios() {
-        List<UsuarioDTO> usuarios = usuarioService.listarTodos();
+    public ResponseEntity<List<UsuarioDTO>> listarTodosUsuarios(Pageable pageable) {
+        List<UsuarioDTO> usuarios = usuarioService.listarTodos(pageable);
 
         return new ResponseEntity<>(usuarios, HttpStatus.OK);
     }
