@@ -23,7 +23,5 @@ public class UsuarioDTO {
     @NotBlank(message = "Insira o nome de usuário pelo qual o mesmo irá fazer login")
     private String nomeUser;
 
-    private String senhaUser;
-
     private Boolean ativo = true;
 }
