@@ -22,8 +22,8 @@ public class IezApplication {
         SpringApplication.run(IezApplication.class, args);
 	}
 
-	// TODO Fazer método de login
 	// TODO Fazer método de criação de token
 	// TODO Fazer método de troca de senha
+    // TODO Fazer a conta do total da venda sozinho kk
 
 }
